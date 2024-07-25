@@ -18,6 +18,16 @@ _Example._
 PORT=3111 npm run start:dev
 ```
 
+# To test the project
+
+```
+npm run test
+```
+
+```
+npm run test:cov
+```
+
 # To use the API
 
 The project will start up with sample data. Everytime the server is rebooted will start with a new fresh sample data.
@@ -31,7 +41,7 @@ The project will start up with sample data. Everytime the server is rebooted wil
 <tbody>
 <tr><td style="vertical-align: top;">1. Get todo list.</td><td><code>curl --location 'localhost:3111/todo'</code></td></tr>
 <tr><td style="vertical-align: top;">2. Get todo item by ID.</td><td><code>curl --location 'localhost:3111/todo/0BMf4Ny9R'</code></td></tr>
-<tr><td style="vertical-align: top;">3. Get todo item by ID.</td><td><code>curl --location 'localhost:3111/todo' \<br/>
+<tr><td style="vertical-align: top;">3. Create todo item.</td><td><code>curl --location 'localhost:3111/todo' \<br/>
 --header 'Content-Type: application/json' \<br/>
 --data '{<br/>
     "title": "King said, turning.",<br/>
@@ -176,7 +186,7 @@ Result:
 }
 ```
 
-### 3. Get todo item by ID.
+### 3. Create todo item.
 
 ```sh
 curl --location 'localhost:3111/todo' \
@@ -257,9 +267,6 @@ Response:
 
 ```json
 {
-  "data": {
-    "id": "wnBMJb3co"
-  },
   "success": true,
   "timestamp": "2024-07-24 13:42:23"
 }
@@ -308,6 +315,20 @@ Response:
 
 ```json
 {
+  "success": true,
+  "timestamp": "2024-07-25 08:36:19"
+}
+```
+
+Then query to get all todo
+
+
+```sh
+curl --location 'localhost:3111/todo'
+```
+
+```json
+{
   "data": [
     {
       "id": "5axim8syb",
@@ -319,8 +340,8 @@ Response:
     },
     {
       "id": "tm6wy4c7s",
-      "title": "X",
-      "favorites": true,
+      "title": "Twitter",
+      "favorites": false,
       "scheduledTime": "2024-08-12 13:01:16",
       "notes": "Alice thought the poor little thing sat down and make one quite giddy.",
       "createdAt": "2024-03-22 15:16:16",
@@ -342,7 +363,7 @@ Response:
       "scheduledTime": "2024-09-29 18:22:28",
       "notes": "",
       "createdAt": "2024-06-25 00:00:00",
-      "order": 3
+      "order": 4
     },
     {
       "id": "5bhx8elav",
@@ -350,7 +371,7 @@ Response:
       "favorites": false,
       "notes": "",
       "createdAt": "2024-06-16 11:03:35",
-      "order": 4
+      "order": 5
     },
     {
       "id": "0f7hdrwh3",
@@ -359,7 +380,7 @@ Response:
       "scheduledTime": "2024-09-29 18:22:28",
       "notes": "",
       "createdAt": "2024-06-23 01:26:53",
-      "order": 5
+      "order": 6
     },
     {
       "id": "0BMf4Ny9R",
@@ -368,7 +389,16 @@ Response:
       "scheduledTime": "2024-09-29 18:22:28",
       "notes": "",
       "createdAt": "2024-06-24 00:00:00",
-      "order": 6
+      "order": 7
+    },
+    {
+      "id": "wnBMJb3co",
+      "title": "Tesla",
+      "favorites": true,
+      "scheduledTime": "2024-09-29 18:22:28",
+      "notes": "",
+      "createdAt": "2024-06-26 00:00:00",
+      "order": 8
     },
     {
       "id": "gp2amYvwP",
@@ -380,7 +410,8 @@ Response:
       "order": 9
     }
   ],
+  "total": 9,
   "success": true,
-  "timestamp": "2024-07-24 13:44:43"
+  "timestamp": "2024-07-25 08:43:40"
 }
 ```

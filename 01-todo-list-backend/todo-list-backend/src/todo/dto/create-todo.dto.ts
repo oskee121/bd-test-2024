@@ -1,5 +1,5 @@
 export class CreateTodoDto {
-  title: string;
-  scheduledTime?: string;
   notes?: string;
+  scheduledTime?: string;
+  title: string;
 }

@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { Todo } from './entities/todo.entity';
-import getDateString from 'src/libs/dates';
-import { sortTodo, findItemIndexById, patchOrderNumber } from 'src/libs/arrays';
+import getDateString from '../libs/dates';
+import { sortTodo, findItemIndexById, patchOrderNumber } from '../libs/arrays';
 
 const randomId = (): string =>
   Array(9)
@@ -101,7 +101,6 @@ export class TodoService {
   }
 
   create(createTodoDto: CreateTodoDto) {
-    console.log(createTodoDto);
     const id = randomId();
     const save: Todo = {
       ...createTodoDto,
@@ -128,7 +127,7 @@ export class TodoService {
       const findItemIndex = findItemIndexById(this.todoList, id);
       if (updateTodoDto.title)
         this.todoList[findItemIndex].title = updateTodoDto.title;
-      if (updateTodoDto.favorites)
+      if (updateTodoDto.favorites !== undefined)
         this.todoList[findItemIndex].favorites = updateTodoDto.favorites;
       if (updateTodoDto.scheduledTime)
         this.todoList[findItemIndex].scheduledTime =
@@ -184,11 +183,14 @@ export class TodoService {
     }
     const secondHalfList = sortedList.splice(newPosition);
 
-    return patchOrderNumber(
+    this.todoList = patchOrderNumber(
       [...sortedList, ...movingItem, ...secondHalfList],
-      reorderBetween[0],
+      reorderBetween[0] + 1,
       reorderBetween,
     );
+    console.log(JSON.stringify(this.todoList));
+
+    return this.todoList;
   }
 
   remove(id: string) {

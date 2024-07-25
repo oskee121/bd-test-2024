@@ -11,7 +11,7 @@ import {
 import { TodoService } from './todo.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
-import getDateString from 'src/libs/dates';
+import getDateString from '../libs/dates';
 import { ReorderTodoDto } from './dto/reorder-todo.dto';
 
 @Controller('todo')
@@ -20,7 +20,6 @@ export class TodoController {
 
   @Post()
   create(@Body() createTodoDto: CreateTodoDto) {
-    console.log(createTodoDto);
     return {
       data: this.todoService.create(createTodoDto),
       success: true,
@@ -30,9 +29,8 @@ export class TodoController {
 
   @Put('reorder/:id')
   reorder(@Param('id') id: string, @Body() reorderTodoDto: ReorderTodoDto) {
-    console.log(reorderTodoDto);
+    this.todoService.reorder(id, reorderTodoDto.position);
     return {
-      data: this.todoService.reorder(id, reorderTodoDto.position),
       success: true,
       timestamp: getDateString(),
     };
@@ -65,8 +63,8 @@ export class TodoController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
+    this.todoService.remove(id);
     return {
-      data: this.todoService.remove(id),
       success: true,
       timestamp: getDateString(),
     };
