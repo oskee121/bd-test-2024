@@ -18,6 +18,7 @@ import {
 } from "react-native";
 
 type QuestionnaireItem = { id: number; title: string; answers: string[] };
+type CheckAnswersDto = { id: number; answer: string };
 
 const _windowDimensions = Dimensions.get("window");
 const _screenDimensions = Dimensions.get("screen");
@@ -33,52 +34,90 @@ const _questionnaire: QuestionnaireItem[] = [
       "เที่ยงคืนจ๊าบ สเตชันเจล เซ็กซี่ไลน์เฟอร์นิเจอร์โปรดิวเซอร์.",
       "เอ็กซ์โปอุปนายกแอ็กชั่นแตงโมล้มเหลว ฮิบรู วาไรตี้แอร์บูติค สไตรค์ ทีวีปาร์ตี้มัฟฟินอันเดอร์เฝอ แอร์คอนแทคแจ็กพอตหมิง ล้มเหลว เฟอร์นิเจอร์ ซิมโฟนี่ ท็อปบูตซามูไรฮ็อตกิมจิ กีวีโต๊ะจีน เคลียร์เหมย ก๋ากั่นซินโดรม",
       "อาข่าโปรเจ็ค แพทเทิร์นโหลยโท่ยแต๋วคัตเอาต์ โคโยตี้หมายปองแคนู",
-      "เซลส์แมน แบนเนอร์เก๋ากี้สตรอว์เบอร์รีซีอีโอ ภคันทลาพาธ",
+      "เซลส์แมน แบนเนอร์เก๋ากี้สตรอว์เบอร์รีซีอีโอ ภคันทลาพาธx",
     ],
   },
   {
     id: 2,
     title:
       "ซาร์ดีนโค้กชิฟฟอนยังไง ลามะสไลด์ อุปัทวเหตุทอร์นาโดฮิบรูออร์แกนพิซซ่า สไตล์โครนา?",
-    answers: ["B-A.", "B-B", "B-C", "B-D"],
+    answers: ["B-A.x", "B-B", "B-C", "B-D"],
   },
   {
     id: 3,
     title:
       "พาวเวอร์เพรียวบางคอปเตอร์ซาดิสต์ สต๊อคไฟลท์แพทยสภาซิม ซาร์ดีนถ่ายทำทาวน์เฮาส์ซาร์ดีนบลูเบอร์รี่?",
-    answers: ["C-A.", "C-B", "C-C", "C-D"],
+    answers: ["C-A.", "C-Bx", "C-C", "C-D"],
   },
-  {
-    id: 4,
-    title:
-      "สตาร์ทจูเนียร์คอร์รัปชันเฝอจิ๊กโก๋ แฟนซี อาข่ากิมจิแหววอิ่มแปร้ซูเอี๋ย คาร์โก้ยูวี สจ๊วต?",
-    answers: ["D-A.", "D-B", "D-C", "D-D"],
-  },
-  {
-    id: 5,
-    title:
-      "สตรอเบอร์รีบึม โนติสลิสต์ชนะเลิศ ดีมานด์สตาร์ท พุดดิ้งเคลม บุญคุณคอนโดมิเนียมเซรามิก ทีวีสเตริโอชาร์จทรู สจ๊วตไฮกุชะโนดโอเคกรีน?",
-    answers: ["E-A.", "E-B", "E-C", "E-D"],
-  },
-  {
-    id: 6,
-    title: "Praesent at ante lacinia, blandit massa vel, pretium risus?",
-    answers: ["E-A.", "E-B", "E-C", "E-D"],
-  },
-  {
-    id: 7,
-    title:
-      "ซัพพลายเบลอสตาร์ทสามแยกสเตชัน ชาร์ตแฮปปี้รามเทพธรรมาภิบาลคอนเทนเนอร์ สไตรค์วาริชศาสตร์ทีวีวัจนะพาสตา ทอร์นาโดมาร์ชอึมครึมโยโย่ อมาตยาธิปไตยโรลออนอันเดอร์เฟรชชี่ ฮัลโหลพุทธศตวรรษ ฟอยล์ยะเยือกเดชานุภาพ สเตริโอ ทาวน์เฮาส์ตะหงิดเพียวละอ่อน?",
-    answers: ["G-A.", "G-B", "G-C", "G-D"],
-  },
+  // {
+  //   id: 4,
+  //   title:
+  //     "สตาร์ทจูเนียร์คอร์รัปชันเฝอจิ๊กโก๋ แฟนซี อาข่ากิมจิแหววอิ่มแปร้ซูเอี๋ย คาร์โก้ยูวี สจ๊วต?",
+  //   answers: ["D-A.", "D-B", "D-C", "D-D"],
+  // },
+  // {
+  //   id: 5,
+  //   title:
+  //     "สตรอเบอร์รีบึม โนติสลิสต์ชนะเลิศ ดีมานด์สตาร์ท พุดดิ้งเคลม บุญคุณคอนโดมิเนียมเซรามิก ทีวีสเตริโอชาร์จทรู สจ๊วตไฮกุชะโนดโอเคกรีน?",
+  //   answers: ["E-A.", "E-B", "E-C", "E-D"],
+  // },
+  // {
+  //   id: 6,
+  //   title: "Praesent at ante lacinia, blandit massa vel, pretium risus?",
+  //   answers: ["E-A.", "E-B", "E-C", "E-D"],
+  // },
+  // {
+  //   id: 7,
+  //   title:
+  //     "ซัพพลายเบลอสตาร์ทสามแยกสเตชัน ชาร์ตแฮปปี้รามเทพธรรมาภิบาลคอนเทนเนอร์ สไตรค์วาริชศาสตร์ทีวีวัจนะพาสตา ทอร์นาโดมาร์ชอึมครึมโยโย่ อมาตยาธิปไตยโรลออนอันเดอร์เฟรชชี่ ฮัลโหลพุทธศตวรรษ ฟอยล์ยะเยือกเดชานุภาพ สเตริโอ ทาวน์เฮาส์ตะหงิดเพียวละอ่อน?",
+  //   answers: ["G-A.", "G-B", "G-C", "G-D"],
+  // },
 ];
+function apiGetCorrectAnswer(currentId: number) {
+  // This should replace with an API.
+  const originalItem: QuestionnaireItem | undefined = _questionnaire.find(
+    ({ id }) => id === currentId
+  );
+  if (!originalItem) return false;
+  return originalItem.answers[0];
+}
+function apiSubmitCheckAllAnswers({
+  allAnswersList,
+}: {
+  allAnswersList: CheckAnswersDto[];
+}) {
+  // This should be an API
+  // [
+  //   { id: 3, answer: "C-Bx" },
+  //   { id: 2, answer: "B-A.x" },
+  //   {
+  //     id: 1,
+  //     answer: "เซลส์แมน แบนเนอร์เก๋ากี้สตรอว์เบอร์รีซีอีโอ ภคันทลาพาธx",
+  //   },
+  // ];
+  const findCorrectedAnswersFromStudent = ({ id, answer }: CheckAnswersDto) => {
+    return (
+      _questionnaire.find((q) => {
+        return q.id === id;
+      })?.answers[0] === answer
+    );
+  };
 
+  console.log(JSON.stringify(allAnswersList));
+
+  const score = allAnswersList.filter(findCorrectedAnswersFromStudent).length;
+
+  console.log(score);
+  // const correctAnswer = apiGetCorrectAnswer(id);
+}
 export default function HomeScreen() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [questionnaire, setQuestionnaire] = useState<QuestionnaireItem[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [modalStartOverVisible, setModalStartOverVisible] = useState(false);
   const [modalHintVisible, setModalHintVisible] = useState(false);
+  const [modalConfirmSubmitVisible, setModalConfirmSubmitVisible] =
+    useState(false);
   const [hintAvailable, setHintAvailable] = useState(
     _defaultTotalHintAvailable
   );
@@ -111,12 +150,20 @@ export default function HomeScreen() {
   function canGoBack() {
     return 0 < currentQuestion;
   }
+  function canSubmit() {
+    return (
+      selectedChoiceList.filter((n) => {
+        return n === 0;
+      }).length === 0
+    );
+  }
   function hasNextQuestion() {
     return currentQuestion < questionnaire.length - 1;
   }
   function closeModal() {
     setModalStartOverVisible(false);
     setModalHintVisible(false);
+    setModalConfirmSubmitVisible(false);
   }
   function openModal() {
     setModalStartOverVisible(true);
@@ -135,14 +182,7 @@ export default function HomeScreen() {
     setSelectedChoiceList(selectedChoiceList);
     updateSelectedChoiceForCurrent();
   }
-  function getCorrectAnswer(currentId: number) {
-    // This should replace with an API.
-    const originalItem: QuestionnaireItem | undefined = _questionnaire.find(
-      ({ id }) => id === currentId
-    );
-    if (!originalItem) return false;
-    return originalItem.answers[0];
-  }
+
   function useHint() {
     if (hintAvailable === 0) {
       return false;
@@ -150,7 +190,7 @@ export default function HomeScreen() {
     const current = questionnaire[currentQuestion];
     const currentId = current.id;
 
-    const correctAnswer = getCorrectAnswer(currentId);
+    const correctAnswer = apiGetCorrectAnswer(currentId);
     if (!correctAnswer) return false;
 
     const indexOfCorrectAnswer = current.answers.indexOf(correctAnswer);
@@ -193,6 +233,19 @@ export default function HomeScreen() {
     return Math.random() - 0.5;
   }
 
+  function submit() {
+    const allAnswersList: CheckAnswersDto[] = questionnaire.map(
+      (q: QuestionnaireItem, index: number) => {
+        console.log(q.id);
+        console.log(q.title);
+        console.log("I pick:" + q.answers[selectedChoiceList[index] - 1]);
+        return { id: q.id, answer: q.answers[selectedChoiceList[index] - 1] };
+      }
+    );
+    // const answersList = questionnaire.map selectedChoiceList;
+    const score = apiSubmitCheckAllAnswers({ allAnswersList });
+  }
+
   useEffect(() => {
     startOver();
   }, []);
@@ -208,7 +261,6 @@ export default function HomeScreen() {
       justifyContent: "center",
       alignItems: "center",
       paddingBottom: 50,
-      backgroundColor: "rgb(196, 219, 208)",
     },
     // questionContainer: {
     //   justifyContent: "center",
@@ -257,26 +309,25 @@ export default function HomeScreen() {
       marginLeft: 16,
       fontWeight: "bold",
       fontSize: 20,
-      backgroundColor: "rgb(233, 176, 239)",
     },
     textBody: {
       color: Colors.dark_gray,
     },
+    textWhite: {
+      color: Colors.white,
+    },
     textDisabled: { color: "rgb(169, 169, 169)" },
     choiceSelector: { width: 30 },
     choiceBox: {
-      backgroundColor: "rgb(251, 218, 255)",
       width: "100%",
       paddingRight: 30,
     },
     choiceSeparator: {
       height: 15,
-      // backgroundColor: "rgb(209, 255, 253)"
     },
     helpToolbarContainer: {
       width: "100%",
       height: 50,
-      backgroundColor: "rgb(255, 250, 210)",
     },
     helpToolbarButton: {
       display: "flex",
@@ -284,13 +335,11 @@ export default function HomeScreen() {
       // minWidth: 450,
       marginLeft: "auto",
       right: 0,
-      backgroundColor: "rgb(244, 233, 154)",
       columnGap: 15,
       flexDirection: "row",
-      paddingLeft: dimensions.window.width < 450 ? 0 : "40%",
+      paddingLeft: dimensions.window.width < 500 ? 0 : "40%",
     },
     helpButtonContainer: {
-      backgroundColor: "rgb(216, 204, 111)",
       flex: 1,
       marginLeft: "auto",
     },
@@ -299,16 +348,16 @@ export default function HomeScreen() {
       paddingVertical: 10,
       justifyContent: "center",
       alignItems: "center",
+      backgroundColor: Colors.dark_gray,
     },
     buttonDisabled: {
-      backgroundColor: "rgb(228, 228, 228)",
+      backgroundColor: Colors.light_gray,
     },
 
     bottomToolbarContainer: {
       width: "100%",
       paddingLeft: 10,
       paddingRight: 10,
-      backgroundColor: "rgb(231, 247, 255)",
     },
     nextPrevToolbarContainer: {
       width: "100%",
@@ -320,7 +369,6 @@ export default function HomeScreen() {
     nextPrevToolbarPanel: {
       alignItems: "center",
       flex: 1,
-      backgroundColor: "rgb(216, 222, 254)",
     },
     leftRightButton: {
       width: "100%",
@@ -330,7 +378,7 @@ export default function HomeScreen() {
       borderRadius: 10,
       marginLeft: 5,
       marginRight: 5,
-      backgroundColor: "rgb(100, 167, 200)",
+      backgroundColor: Colors.blue,
     },
     // rightButton: {
     //   width: "100%",
@@ -353,11 +401,13 @@ export default function HomeScreen() {
     },
     scrollViewContainer: { flex: 1 },
     scrollView: {
-      backgroundColor: "pink",
       marginHorizontal: 0,
     },
     text: {
       fontSize: 42,
+    },
+    buttonTextStyle: {
+      color: Colors.white,
     },
   });
 
@@ -406,19 +456,18 @@ export default function HomeScreen() {
       paddingVertical: 10,
     },
     buttonHighlight: {
-      backgroundColor: "#2196F3",
+      backgroundColor: Colors.blue,
     },
     buttonLowProfile: {
-      backgroundColor: "#b9b9b9",
+      backgroundColor: Colors.light_gray,
     },
     buttonClose: {},
-    textStyle: {
-      color: "white",
-      fontWeight: "bold",
-      textAlign: "center",
-    },
     modalText: {
       marginBottom: 15,
+      textAlign: "center",
+    },
+    modalButtonTextStyle: {
+      fontWeight: "bold",
       textAlign: "center",
     },
   });
@@ -516,7 +565,7 @@ export default function HomeScreen() {
               >
                 <Typography
                   style={[
-                    styles.textBody,
+                    styles.textWhite,
                     !canUseHint() && styles.textDisabled,
                   ]}
                 >
@@ -537,7 +586,7 @@ export default function HomeScreen() {
               >
                 <Typography
                   style={[
-                    styles.textBody,
+                    styles.textWhite,
                     checkIfSafeToReset() && styles.textDisabled,
                   ]}
                 >
@@ -551,21 +600,27 @@ export default function HomeScreen() {
           style={[styles.helpToolbarContainer, styles.nextPrevToolbarContainer]}
         >
           <View style={styles.nextPrevToolbarPanel}>
-            {canGoBack() && (
-              <Pressable
-                onPress={() => prevQuestion()}
-                style={styles.leftRightButton}
+            <Pressable
+              onPress={() => (canGoBack() ? prevQuestion() : () => false)}
+              style={[
+                styles.leftRightButton,
+                !canGoBack() && styles.buttonDisabled,
+              ]}
+            >
+              <Typography
+                style={[
+                  styles.buttonTextStyle,
+                  !canGoBack() && styles.textDisabled,
+                ]}
               >
-                <Typography style={styles.textBody}>
-                  <FontAwesome
-                    size={28}
-                    name="chevron-left"
-                    style={[styles.iconSmall, styles.rightSpace]}
-                  />
-                  {"Back"}
-                </Typography>
-              </Pressable>
-            )}
+                <FontAwesome
+                  size={28}
+                  name="chevron-left"
+                  style={[styles.iconSmall, styles.rightSpace]}
+                />
+                {"Back"}
+              </Typography>
+            </Pressable>
           </View>
           <View style={styles.nextPrevToolbarPanel}>
             {hasNextQuestion() ? (
@@ -577,7 +632,10 @@ export default function HomeScreen() {
                 ]}
               >
                 <Typography
-                  style={[styles.textBody, !canGoNext() && styles.textDisabled]}
+                  style={[
+                    styles.buttonTextStyle,
+                    !canGoNext() && styles.textDisabled,
+                  ]}
                 >
                   {"Next"}
                   <FontAwesome
@@ -588,8 +646,23 @@ export default function HomeScreen() {
                 </Typography>
               </Pressable>
             ) : (
-              <Pressable onPress={() => false} style={styles.leftRightButton}>
-                <Typography style={styles.textBody}>{"Submit"}</Typography>
+              <Pressable
+                onPress={() =>
+                  canSubmit() ? setModalConfirmSubmitVisible(true) : false
+                }
+                style={[
+                  styles.leftRightButton,
+                  !canSubmit() && styles.buttonDisabled,
+                ]}
+              >
+                <Typography
+                  style={[
+                    styles.buttonTextStyle,
+                    !canSubmit() && styles.textDisabled,
+                  ]}
+                >
+                  {"Submit"}
+                </Typography>
               </Pressable>
             )}
           </View>
@@ -623,7 +696,14 @@ export default function HomeScreen() {
                 ]}
                 onPress={() => closeModal()}
               >
-                <Text style={modalStyles.textStyle}>Cancel</Text>
+                <Text
+                  style={[
+                    styles.buttonTextStyle,
+                    modalStyles.modalButtonTextStyle,
+                  ]}
+                >
+                  Cancel
+                </Text>
               </Pressable>
               <Pressable
                 style={[
@@ -637,7 +717,14 @@ export default function HomeScreen() {
                   closeModal();
                 }}
               >
-                <Text style={modalStyles.textStyle}>Confirm</Text>
+                <Text
+                  style={[
+                    styles.buttonTextStyle,
+                    modalStyles.modalButtonTextStyle,
+                  ]}
+                >
+                  Confirm
+                </Text>
               </Pressable>
             </View>
           </View>
@@ -652,7 +739,12 @@ export default function HomeScreen() {
           <View style={modalStyles.modalView}>
             <View>
               <Text style={[modalStyles.modalText, styles.textBody]}>
-                Are you sure you want to use Hint?
+                Are you sure you want to use hint?
+              </Text>
+            </View>
+            <View>
+              <Text style={[modalStyles.modalText, styles.textBody]}>
+                Hint remaining: {hintAvailable}
               </Text>
             </View>
             <View style={modalStyles.buttonsContainer}>
@@ -665,7 +757,14 @@ export default function HomeScreen() {
                 ]}
                 onPress={() => closeModal()}
               >
-                <Text style={modalStyles.textStyle}>Cancel</Text>
+                <Text
+                  style={[
+                    styles.buttonTextStyle,
+                    modalStyles.modalButtonTextStyle,
+                  ]}
+                >
+                  Cancel
+                </Text>
               </Pressable>
               <Pressable
                 style={[
@@ -679,7 +778,75 @@ export default function HomeScreen() {
                   closeModal();
                 }}
               >
-                <Text style={modalStyles.textStyle}>Sure!</Text>
+                <Text
+                  style={[
+                    styles.buttonTextStyle,
+                    modalStyles.modalButtonTextStyle,
+                  ]}
+                >
+                  Sure!
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={modalConfirmSubmitVisible}
+      >
+        <View style={modalStyles.centeredView}>
+          <View style={modalStyles.modalView}>
+            <View>
+              <Text style={[modalStyles.modalText, styles.textBody]}>
+                Confirm submit?
+              </Text>
+            </View>
+            <View>
+              <Text style={[modalStyles.modalText, styles.textBody]}>
+                This action cannot be undone...
+              </Text>
+            </View>
+            <View style={modalStyles.buttonsContainer}>
+              <Pressable
+                style={[
+                  modalStyles.buttons,
+                  modalStyles.button,
+                  modalStyles.buttonClose,
+                  modalStyles.buttonHighlight,
+                ]}
+                onPress={() => closeModal()}
+              >
+                <Text
+                  style={[
+                    styles.buttonTextStyle,
+                    modalStyles.modalButtonTextStyle,
+                  ]}
+                >
+                  Cancel
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[
+                  modalStyles.buttons,
+                  modalStyles.button,
+                  modalStyles.buttonClose,
+                  modalStyles.buttonLowProfile,
+                ]}
+                onPress={() => {
+                  submit();
+                  closeModal();
+                }}
+              >
+                <Text
+                  style={[
+                    styles.buttonTextStyle,
+                    modalStyles.modalButtonTextStyle,
+                  ]}
+                >
+                  Sure!
+                </Text>
               </Pressable>
             </View>
           </View>
