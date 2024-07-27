@@ -1,23 +1,26 @@
 import Typography from "@/components/Typography";
 import { Colors } from "@/constants/Colors";
+import { RankType } from "@/constants/PlayersRank";
+import {
+  Questionnaire,
+  QuestionnaireItemType,
+} from "@/constants/Questionnaire";
+import { storeDataToStorage } from "@/repository/storage";
 import { FontAwesome } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { useRouter, useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   Pressable,
-  PressableProps,
-  Alert,
   Modal,
   Dimensions,
   ScrollView,
   SafeAreaView,
-  StatusBar,
+  TextInput,
 } from "react-native";
 
-type QuestionnaireItem = { id: number; title: string; answers: string[] };
 type CheckAnswersDto = { id: number; answer: string };
 
 const _windowDimensions = Dimensions.get("window");
@@ -25,57 +28,9 @@ const _screenDimensions = Dimensions.get("screen");
 
 const _defaultTotalHintAvailable = 1;
 
-// ****** FIRST CHOICE ALWAYS BE THE CORRECT ANSWER ******
-const _questionnaire: QuestionnaireItem[] = [
-  {
-    id: 1,
-    title: "Lorem ipsum dolor sit amet, consectetur adipiscing elit?",
-    answers: [
-      "เที่ยงคืนจ๊าบ สเตชันเจล เซ็กซี่ไลน์เฟอร์นิเจอร์โปรดิวเซอร์.",
-      "เอ็กซ์โปอุปนายกแอ็กชั่นแตงโมล้มเหลว ฮิบรู วาไรตี้แอร์บูติค สไตรค์ ทีวีปาร์ตี้มัฟฟินอันเดอร์เฝอ แอร์คอนแทคแจ็กพอตหมิง ล้มเหลว เฟอร์นิเจอร์ ซิมโฟนี่ ท็อปบูตซามูไรฮ็อตกิมจิ กีวีโต๊ะจีน เคลียร์เหมย ก๋ากั่นซินโดรม",
-      "อาข่าโปรเจ็ค แพทเทิร์นโหลยโท่ยแต๋วคัตเอาต์ โคโยตี้หมายปองแคนู",
-      "เซลส์แมน แบนเนอร์เก๋ากี้สตรอว์เบอร์รีซีอีโอ ภคันทลาพาธx",
-    ],
-  },
-  {
-    id: 2,
-    title:
-      "ซาร์ดีนโค้กชิฟฟอนยังไง ลามะสไลด์ อุปัทวเหตุทอร์นาโดฮิบรูออร์แกนพิซซ่า สไตล์โครนา?",
-    answers: ["B-A.x", "B-B", "B-C", "B-D"],
-  },
-  {
-    id: 3,
-    title:
-      "พาวเวอร์เพรียวบางคอปเตอร์ซาดิสต์ สต๊อคไฟลท์แพทยสภาซิม ซาร์ดีนถ่ายทำทาวน์เฮาส์ซาร์ดีนบลูเบอร์รี่?",
-    answers: ["C-A.", "C-Bx", "C-C", "C-D"],
-  },
-  // {
-  //   id: 4,
-  //   title:
-  //     "สตาร์ทจูเนียร์คอร์รัปชันเฝอจิ๊กโก๋ แฟนซี อาข่ากิมจิแหววอิ่มแปร้ซูเอี๋ย คาร์โก้ยูวี สจ๊วต?",
-  //   answers: ["D-A.", "D-B", "D-C", "D-D"],
-  // },
-  // {
-  //   id: 5,
-  //   title:
-  //     "สตรอเบอร์รีบึม โนติสลิสต์ชนะเลิศ ดีมานด์สตาร์ท พุดดิ้งเคลม บุญคุณคอนโดมิเนียมเซรามิก ทีวีสเตริโอชาร์จทรู สจ๊วตไฮกุชะโนดโอเคกรีน?",
-  //   answers: ["E-A.", "E-B", "E-C", "E-D"],
-  // },
-  // {
-  //   id: 6,
-  //   title: "Praesent at ante lacinia, blandit massa vel, pretium risus?",
-  //   answers: ["E-A.", "E-B", "E-C", "E-D"],
-  // },
-  // {
-  //   id: 7,
-  //   title:
-  //     "ซัพพลายเบลอสตาร์ทสามแยกสเตชัน ชาร์ตแฮปปี้รามเทพธรรมาภิบาลคอนเทนเนอร์ สไตรค์วาริชศาสตร์ทีวีวัจนะพาสตา ทอร์นาโดมาร์ชอึมครึมโยโย่ อมาตยาธิปไตยโรลออนอันเดอร์เฟรชชี่ ฮัลโหลพุทธศตวรรษ ฟอยล์ยะเยือกเดชานุภาพ สเตริโอ ทาวน์เฮาส์ตะหงิดเพียวละอ่อน?",
-  //   answers: ["G-A.", "G-B", "G-C", "G-D"],
-  // },
-];
 function apiGetCorrectAnswer(currentId: number) {
   // This should replace with an API.
-  const originalItem: QuestionnaireItem | undefined = _questionnaire.find(
+  const originalItem: QuestionnaireItemType | undefined = Questionnaire.find(
     ({ id }) => id === currentId
   );
   if (!originalItem) return false;
@@ -87,17 +42,9 @@ function apiSubmitCheckAllAnswers({
   allAnswersList: CheckAnswersDto[];
 }) {
   // This should be an API
-  // [
-  //   { id: 3, answer: "C-Bx" },
-  //   { id: 2, answer: "B-A.x" },
-  //   {
-  //     id: 1,
-  //     answer: "เซลส์แมน แบนเนอร์เก๋ากี้สตรอว์เบอร์รีซีอีโอ ภคันทลาพาธx",
-  //   },
-  // ];
   const findCorrectedAnswersFromStudent = ({ id, answer }: CheckAnswersDto) => {
     return (
-      _questionnaire.find((q) => {
+      Questionnaire.find((q) => {
         return q.id === id;
       })?.answers[0] === answer
     );
@@ -108,11 +55,15 @@ function apiSubmitCheckAllAnswers({
   const score = allAnswersList.filter(findCorrectedAnswersFromStudent).length;
 
   console.log(score);
-  // const correctAnswer = apiGetCorrectAnswer(id);
+  return score;
 }
+
 export default function HomeScreen() {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [questionnaire, setQuestionnaire] = useState<QuestionnaireItem[]>([]);
+  const [questionnaire, setQuestionnaire] = useState<QuestionnaireItemType[]>(
+    []
+  );
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [modalStartOverVisible, setModalStartOverVisible] = useState(false);
   const [modalHintVisible, setModalHintVisible] = useState(false);
@@ -122,13 +73,13 @@ export default function HomeScreen() {
     _defaultTotalHintAvailable
   );
   const [selectedChoice, setSelectedChoice] = useState<number>(0);
-  const [selectedChoiceList, setSelectedChoiceList] = useState<number[]>(
-    Array(questionnaire.length).fill(0)
-  );
+  const [selectedChoiceList, setSelectedChoiceList] = useState<number[]>([]);
   const [dimensions, setDimensions] = useState({
     window: _windowDimensions,
     screen: _screenDimensions,
   });
+  const [playerNameInput, setPlayerNameInput] = useState<string>("");
+
   useEffect(() => {
     const subscription = Dimensions.addEventListener(
       "change",
@@ -136,7 +87,9 @@ export default function HomeScreen() {
         setDimensions({ window, screen });
       }
     );
-    return () => subscription?.remove();
+    return () => {
+      return subscription?.remove();
+    };
   });
 
   const nextQuestion = () => {
@@ -170,8 +123,7 @@ export default function HomeScreen() {
   }
   function startOver() {
     setIsLoading(true);
-    setQuestionnaire(shuffleQuestionnaire(_questionnaire));
-    setSelectedChoiceList(Array(questionnaire.length).fill(0));
+    setQuestionnaire(shuffleQuestionnaire(Questionnaire));
     setHintAvailable(_defaultTotalHintAvailable);
     setCurrentQuestion(0);
     updateSelectedChoiceForCurrent();
@@ -210,21 +162,9 @@ export default function HomeScreen() {
   function canUseHint() {
     return hintAvailable > 0;
   }
-  // function shuffleArray(source: any[]): any[] {
-  //   let output: any[] = [];
-
-  //   while (source.length) {
-  //     const randomIndex = Math.floor(Math.random() * source.length),
-  //       element: any = source.splice(randomIndex, 1)[0];
-
-  //     output.push(element);
-  //   }
-  //   return output;
-  // }
   function shuffleQuestionnaire(
-    source: QuestionnaireItem[]
-  ): QuestionnaireItem[] {
-    // return source;
+    source: QuestionnaireItemType[]
+  ): QuestionnaireItemType[] {
     return [...source].sort(sortShuffle).map(({ answers, ...rest }) => {
       return { answers: [...answers].sort(sortShuffle), ...rest };
     });
@@ -232,18 +172,38 @@ export default function HomeScreen() {
   function sortShuffle() {
     return Math.random() - 0.5;
   }
+  async function apiSaveScore({ title, score }: RankType) {
+    await storeDataToStorage(
+      "user.scores",
+      JSON.stringify({ title, score, current: true })
+    );
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+  function allowPlayerName(str: string) {
+    if (str === "") return true;
 
-  function submit() {
+    return str.match(/^[a-zA-Z0-9]+$/) !== null;
+  }
+  function updatePlayerNameInput(str: string) {
+    return setPlayerNameInput(str.toUpperCase());
+  }
+
+  async function submit() {
     const allAnswersList: CheckAnswersDto[] = questionnaire.map(
-      (q: QuestionnaireItem, index: number) => {
+      (q: QuestionnaireItemType, index: number) => {
         console.log(q.id);
         console.log(q.title);
         console.log("I pick:" + q.answers[selectedChoiceList[index] - 1]);
         return { id: q.id, answer: q.answers[selectedChoiceList[index] - 1] };
       }
     );
-    // const answersList = questionnaire.map selectedChoiceList;
     const score = apiSubmitCheckAllAnswers({ allAnswersList });
+
+    const result = await apiSaveScore({ title: playerNameInput, score });
+    console.log(playerNameInput + " score=" + score);
+
+    setPlayerNameInput("");
+    router.replace("/leaderboard");
   }
 
   useEffect(() => {
@@ -251,59 +211,30 @@ export default function HomeScreen() {
   }, []);
 
   useEffect(() => {
+    setSelectedChoiceList(Array(questionnaire.length).fill(0));
+  }, [questionnaire]);
+
+  useEffect(() => {
     updateSelectedChoiceForCurrent();
   }, [selectedChoiceList, currentQuestion]);
 
   const styles = StyleSheet.create({
     container: {
-      // paddingTop: 35,
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      paddingBottom: 50,
-    },
-    // questionContainer: {
-    //   justifyContent: "center",
-    //   alignItems: "center",
-    //   height: "33%",
-    //   backgroundColor: "rgb(226, 255, 241)",
-    //   // borderTopColor: "rgb(172, 172, 172)",
-    //   // borderTopWidth: 2,
-    //   width: "100%",
-    //   paddingBottom: 10,
-    // },
-    // answerContainerScrollSafeArea: {
-    //   flex: 1,
-    //   paddingTop: StatusBar.currentHeight,
-    // },
-    // answerContainer: {
-    //   // justifyContent: "center",
-    //   alignItems: "flex-start",
-    //   // marginTop: 30,
-    //   backgroundColor: "rgb(255, 255, 255)",
-    //   borderTopColor: "rgb(172, 172, 172)",
-    //   borderTopWidth: 2,
-    //   width: "100%",
-    //   height: "60%",
-    //   paddingTop: 15,
-    //   paddingBottom: 10,
-    //   // paddingLeft: 10,
-    //   // paddingRight: 10,
-    //   // overflow: "scroll",
-    // },
-    overlay: {
-      position: "absolute",
-      right: 0,
-      top: 0,
-      width: "30%",
-      height: "30%",
-      backgroundColor: "#eee",
+      paddingBottom: 15,
     },
     textTitle: {
       marginLeft: 16,
       fontWeight: "bold",
       fontSize: 28,
       paddingVertical: 10,
+    },
+    textQuestion: {
+      marginBottom: 15,
+      textShadowColor: Colors.white,
+      textShadowOffset: { width: 0, height: 1 },
     },
     textAnswer: {
       marginLeft: 16,
@@ -332,7 +263,6 @@ export default function HomeScreen() {
     helpToolbarButton: {
       display: "flex",
       width: "100%",
-      // minWidth: 450,
       marginLeft: "auto",
       right: 0,
       columnGap: 15,
@@ -363,7 +293,6 @@ export default function HomeScreen() {
       width: "100%",
       display: "flex",
       flexDirection: "row",
-      // height: "12%",
       columnGap: 15,
     },
     nextPrevToolbarPanel: {
@@ -375,29 +304,15 @@ export default function HomeScreen() {
       height: "100%",
       justifyContent: "center",
       alignItems: "center",
-      borderRadius: 10,
       marginLeft: 5,
       marginRight: 5,
       backgroundColor: Colors.blue,
     },
-    // rightButton: {
-    //   width: "100%",
-    //   height: "100%",
-    //   justifyContent: "center",
-    //   alignItems: "center",
-    //   borderRadius: 10,
-    //   marginLeft: 5,
-    //   marginRight: 5,
-    //   backgroundColor: "rgb(100, 167, 200)",
-    // },
+    buttonStyle: {
+      borderRadius: 10,
+    },
     iconSmall: {
       fontSize: 16,
-    },
-    leftSpace: {
-      marginLeft: 10,
-    },
-    rightSpace: {
-      marginRight: 10,
     },
     scrollViewContainer: { flex: 1 },
     scrollView: {
@@ -408,6 +323,16 @@ export default function HomeScreen() {
     },
     buttonTextStyle: {
       color: Colors.white,
+    },
+    textModal: {
+      fontSize: 16,
+    },
+    textInput: {
+      fontSize: 20,
+      padding: 15,
+      borderColor: Colors.light_gray,
+      borderWidth: 1,
+      borderRadius: 10,
     },
   });
 
@@ -421,6 +346,17 @@ export default function HomeScreen() {
       paddingRight: 30,
       marginHorizontal: "auto",
       width: "100%",
+    },
+    modalSection: {
+      width: "80%",
+      paddingHorizontal: 30,
+      paddingVertical: 15,
+    },
+    modalTopSection: {},
+    modalSectionBorder: {
+      width: "50%",
+      borderColor: Colors.light_gray,
+      borderBottomWidth: 1,
     },
     modalView: {
       margin: 20,
@@ -451,7 +387,6 @@ export default function HomeScreen() {
     },
     button: {
       borderRadius: 20,
-      // padding: 10,
       elevation: 2,
       paddingVertical: 10,
     },
@@ -462,9 +397,13 @@ export default function HomeScreen() {
       backgroundColor: Colors.light_gray,
     },
     buttonClose: {},
+    modalHeader: { fontSize: 24 },
     modalText: {
-      marginBottom: 15,
       textAlign: "center",
+      marginBottom: 20,
+    },
+    modalTextLast: {
+      marginBottom: 0,
     },
     modalButtonTextStyle: {
       fontWeight: "bold",
@@ -474,20 +413,10 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      {/* <form> */}
-      {/* {questionnaire && (
-        <View style={styles.questionContainer}>
-          <Typography style={styles.textTitle}>
-            Question {currentQuestion + 1}/{questionnaire.length}
-            {" - "}
-            {questionnaire[currentQuestion].title}
-          </Typography>
-        </View>
-      )} */}
       {!isLoading && questionnaire.length > 0 && (
         <SafeAreaView style={styles.scrollViewContainer}>
           <ScrollView style={styles.scrollView}>
-            <Typography style={styles.textTitle}>
+            <Typography style={[styles.textTitle, styles.textQuestion]}>
               Question {currentQuestion + 1}/{questionnaire.length}
               {" - "}
               {questionnaire[currentQuestion].title}
@@ -519,37 +448,7 @@ export default function HomeScreen() {
           </ScrollView>
         </SafeAreaView>
       )}
-      {/* {questionnaire.length > 0 && (
-        <SafeAreaView style={styles.answerContainerScrollSafeArea}>
-          <ScrollView style={styles.answerContainer}>
-            {questionnaire[currentQuestion].answers.map((ans, index) => (
-              <View
-                key={`answer-${currentQuestion}-${index}`}
-                style={styles.choiceBox}
-              >
-                {index > 0 && <View style={styles.choiceSeparator} />}
-                <Pressable
-                  onPress={() => selectChoice(index + 1, currentQuestion)}
-                >
-                  <View>
-                    <Typography style={styles.textAnswer}>
-                      {index}/{currentQuestion}
-                      <View style={styles.choiceSelector}>
-                        {selectedChoice === index + 1 ? (
-                          <FontAwesome size={28} name="check-square-o" />
-                        ) : (
-                          <FontAwesome size={28} name="square-o" />
-                        )}
-                      </View>
-                      {ans}
-                    </Typography>
-                  </View>
-                </Pressable>
-              </View>
-            ))}
-          </ScrollView>
-        </SafeAreaView>
-      )} */}
+
       <View style={styles.bottomToolbarContainer}>
         <View style={styles.helpToolbarContainer}>
           <View style={styles.helpToolbarButton}>
@@ -559,6 +458,7 @@ export default function HomeScreen() {
                   canUseHint() ? setModalHintVisible(true) : () => false
                 }
                 style={[
+                  styles.buttonStyle,
                   styles.helpButton,
                   !canUseHint() && styles.buttonDisabled,
                 ]}
@@ -577,9 +477,9 @@ export default function HomeScreen() {
               <Pressable
                 onPress={
                   !checkIfSafeToReset() ? () => openModal() : () => false
-                  // startOver()
                 }
                 style={[
+                  styles.buttonStyle,
                   styles.helpButton,
                   checkIfSafeToReset() && styles.buttonDisabled,
                 ]}
@@ -604,6 +504,7 @@ export default function HomeScreen() {
               onPress={() => (canGoBack() ? prevQuestion() : () => false)}
               style={[
                 styles.leftRightButton,
+                styles.buttonStyle,
                 !canGoBack() && styles.buttonDisabled,
               ]}
             >
@@ -616,9 +517,9 @@ export default function HomeScreen() {
                 <FontAwesome
                   size={28}
                   name="chevron-left"
-                  style={[styles.iconSmall, styles.rightSpace]}
+                  style={[styles.iconSmall]}
                 />
-                {"Back"}
+                {" " + "Back"}
               </Typography>
             </Pressable>
           </View>
@@ -628,6 +529,7 @@ export default function HomeScreen() {
                 onPress={() => (canGoNext() ? nextQuestion() : () => false)}
                 style={[
                   styles.leftRightButton,
+                  styles.buttonStyle,
                   !canGoNext() && styles.buttonDisabled,
                 ]}
               >
@@ -637,11 +539,11 @@ export default function HomeScreen() {
                     !canGoNext() && styles.textDisabled,
                   ]}
                 >
-                  {"Next"}
+                  {"Next" + " "}
                   <FontAwesome
                     size={28}
                     name="chevron-right"
-                    style={[styles.iconSmall, styles.leftSpace]}
+                    style={[styles.iconSmall]}
                   />
                 </Typography>
               </Pressable>
@@ -652,6 +554,7 @@ export default function HomeScreen() {
                 }
                 style={[
                   styles.leftRightButton,
+                  styles.buttonStyle,
                   !canSubmit() && styles.buttonDisabled,
                 ]}
               >
@@ -668,21 +571,34 @@ export default function HomeScreen() {
           </View>
         </View>
       </View>
-      {/* </form> */}
+
       <Modal
         animationType="slide"
         transparent={false}
         visible={modalStartOverVisible}
       >
-        <View style={modalStyles.centeredView}>
+        <View style={[modalStyles.centeredView]}>
           <View style={modalStyles.modalView}>
             <View>
-              <Text style={[modalStyles.modalText, styles.textBody]}>
+              <Text
+                style={[
+                  styles.textBody,
+                  styles.textModal,
+                  modalStyles.modalText,
+                  modalStyles.modalHeader,
+                ]}
+              >
                 Are you sure you want to reset?
               </Text>
             </View>
             <View>
-              <Text style={[modalStyles.modalText, styles.textBody]}>
+              <Text
+                style={[
+                  modalStyles.modalText,
+                  styles.textBody,
+                  styles.textModal,
+                ]}
+              >
                 All unsaved progress will be lost!
               </Text>
             </View>
@@ -738,18 +654,33 @@ export default function HomeScreen() {
         <View style={modalStyles.centeredView}>
           <View style={modalStyles.modalView}>
             <View>
-              <Text style={[modalStyles.modalText, styles.textBody]}>
+              <Text
+                style={[
+                  styles.textBody,
+                  styles.textModal,
+                  modalStyles.modalText,
+                  modalStyles.modalHeader,
+                ]}
+              >
                 Are you sure you want to use hint?
               </Text>
             </View>
             <View>
-              <Text style={[modalStyles.modalText, styles.textBody]}>
+              <Text
+                style={[
+                  modalStyles.modalText,
+                  styles.buttonStyle,
+                  styles.textBody,
+                  styles.textModal,
+                ]}
+              >
                 Hint remaining: {hintAvailable}
               </Text>
             </View>
             <View style={modalStyles.buttonsContainer}>
               <Pressable
                 style={[
+                  styles.buttonStyle,
                   modalStyles.buttons,
                   modalStyles.button,
                   modalStyles.buttonClose,
@@ -759,6 +690,7 @@ export default function HomeScreen() {
               >
                 <Text
                   style={[
+                    styles.buttonStyle,
                     styles.buttonTextStyle,
                     modalStyles.modalButtonTextStyle,
                   ]}
@@ -768,6 +700,7 @@ export default function HomeScreen() {
               </Pressable>
               <Pressable
                 style={[
+                  styles.buttonStyle,
                   modalStyles.buttons,
                   modalStyles.button,
                   modalStyles.buttonClose,
@@ -780,6 +713,7 @@ export default function HomeScreen() {
               >
                 <Text
                   style={[
+                    styles.buttonStyle,
                     styles.buttonTextStyle,
                     modalStyles.modalButtonTextStyle,
                   ]}
@@ -798,15 +732,62 @@ export default function HomeScreen() {
       >
         <View style={modalStyles.centeredView}>
           <View style={modalStyles.modalView}>
-            <View>
-              <Text style={[modalStyles.modalText, styles.textBody]}>
-                Confirm submit?
-              </Text>
+            <View
+              style={[modalStyles.modalSection, modalStyles.modalTopSection]}
+            >
+              <View>
+                <Text
+                  style={[
+                    styles.textBody,
+                    styles.textModal,
+                    modalStyles.modalText,
+                    modalStyles.modalHeader,
+                  ]}
+                >
+                  Confirm submit?
+                </Text>
+              </View>
+              <View>
+                <Text
+                  style={[
+                    modalStyles.modalText,
+                    modalStyles.modalTextLast,
+                    styles.textBody,
+                    styles.textModal,
+                  ]}
+                >
+                  This action cannot be undone...
+                </Text>
+              </View>
             </View>
-            <View>
-              <Text style={[modalStyles.modalText, styles.textBody]}>
-                This action cannot be undone...
-              </Text>
+            <View style={modalStyles.modalSectionBorder}></View>
+            <View style={modalStyles.modalSection}>
+              <View>
+                <Text
+                  style={[
+                    modalStyles.modalText,
+                    styles.textBody,
+                    styles.textModal,
+                  ]}
+                >
+                  Enter your name...
+                </Text>
+              </View>
+              <View>
+                <TextInput
+                  style={[
+                    modalStyles.modalText,
+                    styles.textBody,
+                    styles.textInput,
+                  ]}
+                  maxLength={6}
+                  onKeyPress={(e) => false}
+                  onChangeText={(value) => {
+                    if (allowPlayerName(value)) updatePlayerNameInput(value);
+                  }}
+                  value={playerNameInput}
+                />
+              </View>
             </View>
             <View style={modalStyles.buttonsContainer}>
               <Pressable
@@ -834,8 +815,8 @@ export default function HomeScreen() {
                   modalStyles.buttonClose,
                   modalStyles.buttonLowProfile,
                 ]}
-                onPress={() => {
-                  submit();
+                onPress={async () => {
+                  await submit();
                   closeModal();
                 }}
               >
